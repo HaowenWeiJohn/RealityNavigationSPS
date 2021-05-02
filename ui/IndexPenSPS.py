@@ -58,29 +58,39 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.LSL_stream_name_layout, self.LSL_stream_name_input = init_inputBox(
             parent=self.indexpen_markercontrolpanel_layout, label='LSL outlet stream name:')
 
+        self.LSL_error_stream_name_layout, self.LSL_error_stream_name_input = init_inputBox(
+            parent=self.indexpen_markercontrolpanel_layout, label='LSL error marker outlet stream name:')
+
         self.indexpen_markercontrol_btns_container, self.indexpen_markercontrol_btns_layout = init_container \
             (parent=self.indexpen_markercontrolpanel_layout, vertical=False, label='IndexPen Marker control')
 
         self.interrupt_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Interrupt')
         self.start_testing_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Start testing')
         self.start_experiment_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Start Recording')
-        self.help_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Help')
+        self.error_capture_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Error Signal')
+
 
 
 
         #QLabel
-
         self.indexpen_instruction_container, self.indexpen_instruction_layout = init_container \
             (parent=self.indexpen_presentation_vertical_layout, vertical=True, label='IndexPen Instruction')
 
         self.pop_instruction_window_btn = init_button(parent=self.indexpen_instruction_layout, label='Pop instruction')
 
-        self.currentLabel = QLabel()
+        self.currentLabel = QLabel(text='Write')
+        self.nextLabel = QLabel(text='Next to Write:')
         self.indexpen_instruction_layout.addWidget(self.currentLabel)
+        self.indexpen_instruction_layout.addWidget(self.nextLabel)
         self.currentLabel.adjustSize()
-        # init image dict
+        self.nextLabel.adjustSize()
+
+        # test init image
         self.image_label_dict = init_label_img_dict(config_path.indexpen_gesture_image_dir)
         self.currentLabel.setPixmap(self.image_label_dict['A' + '.PNG'])
+
+
+
 
 
 
