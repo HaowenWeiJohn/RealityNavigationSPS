@@ -1,3 +1,5 @@
+import os
+
 import cv2
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets, QtCore
@@ -9,6 +11,7 @@ from PyQt5.QtWidgets import QLabel, QVBoxLayout
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget
 
 from config import config_ui
+from utils.Sliders import LabeledSlider
 
 
 def init_view(label, container, label_bold=True, position="centertop", vertical=True):
@@ -153,11 +156,9 @@ def init_sensor_or_lsl_widget(parent, label_string, insert_position):
     signal_settings_btn.setFixedWidth(200)
     pop_window_btn.setFixedWidth(200)
 
-
     top_layout.addWidget(ql)
     top_layout.addWidget(signal_settings_btn)
     top_layout.addWidget(pop_window_btn)
-
 
     start_stream_btn = init_button(parent=layout, label='Start Stream')
     stop_stream_btn = init_button(parent=layout, label='Stop Stream')
@@ -190,8 +191,10 @@ def init_add_widget(parent, lsl_presets: dict, device_presets: dict):
 
     add_sensor_btn = init_button(parent=layout_add_sensor, label='Add Stream')
 
-    container_connect_device, layout_connect_device = init_container(parent=layout, label='Select a Device to Connect', vertical=False)
-    container_connect_device, layout_connect_device = init_container(parent=layout, label='Select a Device to Connect', vertical=False)
+    container_connect_device, layout_connect_device = init_container(parent=layout, label='Select a Device to Connect',
+                                                                     vertical=False)
+    container_connect_device, layout_connect_device = init_container(parent=layout, label='Select a Device to Connect',
+                                                                     vertical=False)
     device_combo_box = init_combo_box(parent=layout_connect_device, label=None,
                                       item_list=list(
                                           device_presets.keys()))
@@ -256,6 +259,28 @@ def convert_cv_qt(cv_img):
     return QPixmap.fromImage(convert_to_Qt_format)
 
 
+def init_slider_bar_box(parent, label=None, vertical=False, label_bold=False, min_value=1, max_value=5):
+    _, slider_vertical_layout = init_container(parent=parent, vertical=vertical)
+
+    if label:
+        ql = QLabel()
+        if label_bold:
+            ql.setStyleSheet("font: bold 14px;")
+        else:
+            ql.setStyleSheet("font: 14px;")
+
+        ql.setText(label)
+        slider_vertical_layout.addWidget(ql)
+
+    # slider with interval
+    slider_view = LabeledSlider(minimum=min_value, maximum=max_value)
+    slider_view.setFocusPolicy(Qt.StrongFocus)
+
+    slider_vertical_layout.addWidget(slider_view)
+
+    return slider_vertical_layout, slider_view
+
+
 def get_working_camera_id():
     # checks the first 10 indexes.
     index = 0
@@ -270,12 +295,23 @@ def get_working_camera_id():
         i -= 1
     return arr
 
+
 def stream_stylesheet(stylesheet_url):
     stylesheet = QFile(stylesheet_url)
     stylesheet.open(QFile.ReadOnly | QFile.Text)
     stream = QTextStream(stylesheet)
     QtWidgets.qApp.setStyleSheet(stream.readAll())
 
+def init_label_img_dict(path):
+    img_dict = {}
+    for img_name in os.listdir(path):
+        img_path = os.path.join(path, img_name)
+        img = cv2.imread(img_path)
+        img = cv2.resize(img, (500, 700))
+        img = convert_cv_qt(img)
+        img_dict[img_name] = img
+
+    return img_dict
 
 class AnotherWindow(QWidget):
     """
@@ -297,3 +333,4 @@ class AnotherWindow(QWidget):
             event.accept()  # let the window close
         else:
             event.ignore()
+

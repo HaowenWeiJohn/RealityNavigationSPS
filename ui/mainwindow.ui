@@ -24,7 +24,7 @@
        <attribute name="title">
         <string>IndexPen</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout"/>
+       <layout class="QHBoxLayout" name="indexpen_tab_horizontal_layout"/>
       </widget>
       <widget class="QWidget" name="thumouse_tab">
        <property name="contextMenuPolicy">

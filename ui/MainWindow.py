@@ -6,7 +6,8 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QLabel, QMessageBox
 from scipy.signal import decimate
 from ui.SettingsTab import SettingsTab
-
+from ui.IndexPenSPS import IndexPenSPS
+from ui.ThumouseSPS import ThumouseSPS
 import config
 
 # from ui.SettingsTab import SettingsTab
@@ -27,32 +28,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle('Reality Navigation SPS')
         self.app = app
 
-        #Thumouse Tab
+        # IndexPen Tab
+        self.indexpenSPS = IndexPenSPS(self)
+        self.indexpen_tab_horizontal_layout.addWidget(self.indexpenSPS)
 
+        # Thumouse Tab
+        self.thumouseSPS = ThumouseSPS(self)
+        self.indexpen_tab_horizontal_layout.addWidget(self.thumouseSPS)
 
+        # fNirsTab
 
-        #IndexPen Tab
-
-
-
-
-        #fNirsTab
-
-
-
-
-        #SetingTab
+        # SetingTab
         self.settingTab = SettingsTab(self)
         self.settings_tab_vertical_layout.addWidget(self.settingTab)
 
-
-
-        #signal
+        # signal
         lsl_marker_thread = {}
-
-
-
-
 
         # create sensor threads, worker threads for different sensors
 

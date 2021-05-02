@@ -121,10 +121,10 @@ class LabeledSlider(QtWidgets.QWidget):
             raise Exception("<orientation> wrong.")
 
         # gives some space to print labels
-        self.left_margin = 10
-        self.top_margin = 10
-        self.right_margin = 10
-        self.bottom_margin = 10
+        self.left_margin = 20
+        self.top_margin = 20
+        self.right_margin = 20
+        self.bottom_margin = 20
 
         self.layout.setContentsMargins(self.left_margin, self.top_margin,
                                        self.right_margin, self.bottom_margin)
