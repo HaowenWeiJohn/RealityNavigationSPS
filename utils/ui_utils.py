@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QComboBox, QDialog, QDialogButtonBox, \
 from PyQt5.QtWidgets import QLabel, QVBoxLayout
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget
 
-import config_ui
+from config import config_ui
 
 
 def init_view(label, container, label_bold=True, position="centertop", vertical=True):
