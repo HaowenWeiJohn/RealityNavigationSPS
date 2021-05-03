@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt, QFile, QTextStream
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QComboBox, QDialog, QDialogButtonBox, \
-    QGraphicsView, QGraphicsScene
+    QGraphicsView, QGraphicsScene, QCheckBox
 from PyQt5.QtWidgets import QLabel, QVBoxLayout
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget
 
@@ -281,6 +281,19 @@ def init_slider_bar_box(parent, label=None, vertical=False, label_bold=False, mi
     return slider_vertical_layout, slider_view
 
 
+def init_checkBox(parent, label=None, label_bold=False, vertical=False, default_checked=False, default_text=None):
+    container, layout = init_container(parent=parent,
+                                       label=label,
+                                       label_bold=label_bold,
+                                       vertical=False)
+    checkbox = QCheckBox()
+    checkbox.setChecked(default_checked)
+    layout.addWidget(checkbox)
+    layout.setAlignment(QtCore.Qt.AlignLeft)
+    # textbox.setStyleSheet("background-color:white;")
+    return layout, checkbox
+
+
 def get_working_camera_id():
     # checks the first 10 indexes.
     index = 0
@@ -302,16 +315,18 @@ def stream_stylesheet(stylesheet_url):
     stream = QTextStream(stylesheet)
     QtWidgets.qApp.setStyleSheet(stream.readAll())
 
+
 def init_label_img_dict(path):
     img_dict = {}
     for img_name in os.listdir(path):
         img_path = os.path.join(path, img_name)
         img = cv2.imread(img_path)
-        img = cv2.resize(img, (500, 700))
+        img = cv2.resize(img, (550, 700))
         img = convert_cv_qt(img)
         img_dict[img_name] = img
 
     return img_dict
+
 
 class AnotherWindow(QWidget):
     """
@@ -333,4 +348,3 @@ class AnotherWindow(QWidget):
             event.accept()  # let the window close
         else:
             event.ignore()
-
