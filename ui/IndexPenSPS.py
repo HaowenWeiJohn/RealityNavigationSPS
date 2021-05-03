@@ -23,14 +23,20 @@ from utils.ui_utils import dialog_popup
 import pyqtgraph as pg
 from config import config_path
 
+
 class IndexPenSPS(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__()
+
+        self.experiment_running = False
+
+
+
+        # load panel
         self.ui = uic.loadUi("ui/IndexPenSPS.ui", self)
 
         # indexpen_markerinfo_verticalLayout & indexpen_presentation_verticalLayout
         # indexpen marker info
-
         self.indexpen_markercontrolpanel_container, self.indexpen_markercontrolpanel_layout = init_container \
             (parent=self.indexpen_markercontrol_vertical_layout, vertical=True, label='IndexPen Marker Control Panel')
 
@@ -43,12 +49,16 @@ class IndexPenSPS(QtWidgets.QWidget):
             min_value=1,
             max_value=4)
         # repeat time slider
-        self.repeat_num_block, self.repeat_num_slider_view = init_slider_bar_box(self.indexpen_markercontrolpanel_layout,
-                                                                                 label="Repeats(Times)",
-                                                                                 vertical=False,
-                                                                                 label_bold=True,
-                                                                                 min_value=1,
-                                                                                 max_value=10)
+        self.repeat_num_block, self.repeat_num_slider_view = init_slider_bar_box(
+            self.indexpen_markercontrolpanel_layout,
+            label="Repeats(Times)",
+            vertical=False,
+            label_bold=True,
+            min_value=1,
+            max_value=10)
+        # Randomized order check box
+        self.random_checkbox_layout, self.random_checkbox = init_checkBox(
+            parent=self.indexpen_markercontrolpanel_layout, label='Randomized Order : ', default_checked=False)
 
         # label list
         self.label_list_layout, self.label_list_input = init_inputBox(parent=self.indexpen_markercontrolpanel_layout,
@@ -69,10 +79,7 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.start_experiment_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Start Recording')
         self.error_capture_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Error Signal')
 
-
-
-
-        #QLabel
+        ##################Instruction block########################
         self.indexpen_instruction_container, self.indexpen_instruction_layout = init_container \
             (parent=self.indexpen_presentation_vertical_layout, vertical=True, label='IndexPen Instruction')
 
@@ -91,6 +98,18 @@ class IndexPenSPS(QtWidgets.QWidget):
 
 
 
+
+
+
+
+
+
+
+    def start_testing_btn_clicked(self):
+        if self.experiment_running:
+            return
+
+        
 
 
 

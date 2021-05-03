@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QWidget" name="indexpen_markerinfo_Widget" native="true">
+    <widget class="QWidget" name="indexpen_markercontrol_Widget" native="true">
      <layout class="QVBoxLayout" name="indexpen_markercontrol_vertical_layout"/>
     </widget>
    </item>
