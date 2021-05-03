@@ -47,7 +47,7 @@ class IndexPenSPS(QtWidgets.QWidget):
             vertical=False,
             label_bold=True,
             min_value=1,
-            max_value=4)
+            max_value=config_ui.indexpen_interval_default_max)
         # repeat time slider
         self.repeat_num_block, self.repeat_num_slider_view = init_slider_bar_box(
             self.indexpen_markercontrolpanel_layout,
@@ -55,21 +55,21 @@ class IndexPenSPS(QtWidgets.QWidget):
             vertical=False,
             label_bold=True,
             min_value=1,
-            max_value=10)
+            max_value=config_ui.indexpen_repeats_default_max)
         # Randomized order check box
         self.random_checkbox_layout, self.random_checkbox = init_checkBox(
             parent=self.indexpen_markercontrolpanel_layout, label='Randomized Order : ', default_checked=False)
 
         # label list
         self.label_list_layout, self.label_list_input = init_inputBox(parent=self.indexpen_markercontrolpanel_layout,
-                                                                      label='Task Label List:')
+                                                                      label='Task Label List:', default_input=config_ui.indexPen_classes_default)
 
         # LSL stream Name
         self.LSL_stream_name_layout, self.LSL_stream_name_input = init_inputBox(
-            parent=self.indexpen_markercontrolpanel_layout, label='LSL outlet stream name:')
+            parent=self.indexpen_markercontrolpanel_layout, label='LSL outlet stream name:', default_input=config_ui.marker_lsl_outlet_name_default)
 
         self.LSL_error_stream_name_layout, self.LSL_error_stream_name_input = init_inputBox(
-            parent=self.indexpen_markercontrolpanel_layout, label='LSL error marker outlet stream name:')
+            parent=self.indexpen_markercontrolpanel_layout, label='LSL error marker outlet stream name:', default_input=config_ui.error_marker_lsl_outlet_name_default)
 
         self.indexpen_markercontrol_btns_container, self.indexpen_markercontrol_btns_layout = init_container \
             (parent=self.indexpen_markercontrolpanel_layout, vertical=False, label='IndexPen Marker control')
@@ -199,11 +199,11 @@ class IndexPenSPS(QtWidgets.QWidget):
 
         print('Current task: '+ current_task)
 
-        # sound
+        # sound bilibilibilibili
         dah()
 
     def stop_experiment_reset(self):
         self.marker_timer.stop()
         self.currentLabel.setPixmap(self.image_label_dict['Nois' + '.PNG'])
-        self.nextLabel.setText('Next to Write')
+        self.nextLabel.setText('Next to Write: ')
         self.experiment_state = 'idle'

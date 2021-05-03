@@ -32,8 +32,12 @@ capture_display_height = 480
 
 
 ######################## indexpen experinment default config #######################
+indexpen_interval_default_max = 4
+indexpen_repeats_default_max = 10
+
 indexpen_interval_default = 4
 indexpen_repeats_default = 5
+
 indexPen_classes_default = 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Spc Bspc Ent Act'
 # indexPen_classes_default = 'Nois Act T H E Spc F I V E Spc B O X I N G Spc W I Z A R D S Spc J U M P Spc Q U I C K L Y Act Nois'
 # indexPen_classes_default = 'Nois Act A Spc L A R G E Spc F A W N Spc J U M P E D Spc Q U I C K L Y Spc O V E R Spc W H I T E Spc Z I N C Spc B O X E S Act Nois'
