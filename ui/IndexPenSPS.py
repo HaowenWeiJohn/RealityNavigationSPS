@@ -43,11 +43,12 @@ class IndexPenSPS(QtWidgets.QWidget):
         # label duration
         self.time_interval_block, self.time_interval_slider_view = init_slider_bar_box(
             self.indexpen_markercontrolpanel_layout,
-            label="Interval lasts(sec)",
+            label="Interval lasts(Sec)",
             vertical=False,
             label_bold=True,
             min_value=1,
             max_value=config_ui.indexpen_interval_default_max)
+        self.time_interval_slider_view.slider.setValue(config_ui.indexpen_interval_time_default)
         # repeat time slider
         self.repeat_num_block, self.repeat_num_slider_view = init_slider_bar_box(
             self.indexpen_markercontrolpanel_layout,
@@ -56,20 +57,25 @@ class IndexPenSPS(QtWidgets.QWidget):
             label_bold=True,
             min_value=1,
             max_value=config_ui.indexpen_repeats_default_max)
+        self.repeat_num_slider_view.slider.setValue(config_ui.indexpen_repeats_num_default)
+
         # Randomized order check box
         self.random_checkbox_layout, self.random_checkbox = init_checkBox(
             parent=self.indexpen_markercontrolpanel_layout, label='Randomized Order : ', default_checked=False)
 
         # label list
         self.label_list_layout, self.label_list_input = init_inputBox(parent=self.indexpen_markercontrolpanel_layout,
-                                                                      label='Task Label List:', default_input=config_ui.indexPen_classes_default)
+                                                                      label='Task Label List:',
+                                                                      default_input=config_ui.indexPen_classes_default)
 
         # LSL stream Name
         self.LSL_stream_name_layout, self.LSL_stream_name_input = init_inputBox(
-            parent=self.indexpen_markercontrolpanel_layout, label='LSL outlet stream name:', default_input=config_ui.marker_lsl_outlet_name_default)
+            parent=self.indexpen_markercontrolpanel_layout, label='LSL outlet stream name:',
+            default_input=config_ui.marker_lsl_outlet_name_default)
 
         self.LSL_error_stream_name_layout, self.LSL_error_stream_name_input = init_inputBox(
-            parent=self.indexpen_markercontrolpanel_layout, label='LSL error marker outlet stream name:', default_input=config_ui.error_marker_lsl_outlet_name_default)
+            parent=self.indexpen_markercontrolpanel_layout, label='LSL error marker outlet stream name:',
+            default_input=config_ui.error_marker_lsl_outlet_name_default)
 
         self.indexpen_markercontrol_btns_container, self.indexpen_markercontrol_btns_layout = init_container \
             (parent=self.indexpen_markercontrolpanel_layout, vertical=False, label='IndexPen Marker control')
@@ -88,8 +94,8 @@ class IndexPenSPS(QtWidgets.QWidget):
         ##################Pop Window Btn########################
         self.pop_instruction_window_btn = init_button(parent=self.indexpen_instruction_layout, label='Pop instruction')
         ########## progress bar ############
-        self.progress_bar = QProgressBar()
-        self.indexpen_instruction_layout.addWidget(self.progress_bar)
+        self.task_progress_bar = QProgressBar()
+        self.indexpen_instruction_layout.addWidget(self.task_progress_bar)
 
         # Instruction Label
         self.currentLabel = QLabel(text='Write')
@@ -108,11 +114,14 @@ class IndexPenSPS(QtWidgets.QWidget):
         # function connection
         self.start_testing_btn.clicked.connect(self.start_testing_btn_clicked)
 
+        ##########################Timer connect#####################################
         # marker on tick
         self.marker_timer = QTimer()
         self.marker_timer.timeout.connect(self.marker_tick)
-        # self.timer.setInterval(config.REFRESH_INTERVAL)  # for 1000 Hz refresh rate
-        # self.timer.start()
+
+        self.progress_bar_update_timer = QTimer()
+        self.progress_bar_update_timer.timeout.connect(self.updata_progress_bar)
+        self.progress_bar_update_timer.setInterval(config_ui.progress_bar_updat_freq)
 
     def marker_info(self):
         # interval
@@ -145,8 +154,8 @@ class IndexPenSPS(QtWidgets.QWidget):
         # create task list
         self.task_label_array = generate_task_label_array(task_label_str=task_label_list, repeats=task_repeats,
                                                           randomized=randomized_order)
-
-        self.marker_timer.setInterval(1000 * task_interval)  # for 1000 Hz refresh rate
+        self.time_interval_ms = 1000 * task_interval
+        self.marker_timer.setInterval(self.time_interval_ms)  # for 1000 Hz refresh rate
 
         self.prepare_experiment()
 
@@ -164,6 +173,7 @@ class IndexPenSPS(QtWidgets.QWidget):
         print('switch to running state')
         # start self.marker_timer
         self.marker_timer.start()
+        self.progress_bar_update_timer.start()
         # send start marker
 
         self.experiment_state = 'running'
@@ -187,23 +197,29 @@ class IndexPenSPS(QtWidgets.QWidget):
         # remove first element, return first element
         current_task = self.task_label_array[0]
         self.task_label_array = np.delete(self.task_label_array, 0)
+
         # switch current image
         self.currentLabel.setPixmap(self.image_label_dict[current_task + '.PNG'])
         # Label Next to Write
-
-        if self.task_label_array.size>0:
+        if self.task_label_array.size > 0:
             self.nextLabel.setText('Next to Write: ' + self.task_label_array[0])
         else:
             self.nextLabel.setText('No next')
         # TODO: send encoder marker
-
-        print('Current task: '+ current_task)
-
+        print(self.marker_timer.remainingTime())
+        print('Current task: ' + current_task)
         # sound bilibilibilibili
         dah()
 
     def stop_experiment_reset(self):
         self.marker_timer.stop()
+        self.progress_bar_update_timer.stop()
+        self.task_progress_bar.setValue(0)
         self.currentLabel.setPixmap(self.image_label_dict['Nois' + '.PNG'])
         self.nextLabel.setText('Next to Write: ')
         self.experiment_state = 'idle'
+
+
+    def updata_progress_bar(self):
+        bar_value = int((self.time_interval_ms - self.marker_timer.remainingTime()) / self.time_interval_ms * 100)
+        self.task_progress_bar.setValue(bar_value)
