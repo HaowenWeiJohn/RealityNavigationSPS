@@ -96,20 +96,37 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.image_label_dict = init_label_img_dict(config_path.indexpen_gesture_image_dir)
         self.currentLabel.setPixmap(self.image_label_dict['A' + '.PNG'])
 
+        #function connection
+        self.start_testing_btn.clicked.connect(self.start_testing_btn_clicked)
 
+        # marker on tick
+        # self.marker_timer = QTimer()
+        # self.marker_timer.timeout.connect(self.marker_tick)
+        # self.timer.setInterval(config.REFRESH_INTERVAL)  # for 1000 Hz refresh rate
 
+        # self.timer.start()
 
+    def marker_info(self):
+        #interval
+        # #repeats
+        # #randomized
+        # tasklabel list
+        # #LSL outlet name
+        # Error Stream name
 
+        task_interval = self.time_interval_slider_view.slider.value()
+        task_repeats = self.repeat_num_slider_view.slider.value()
+        randomized_order = self.random_checkbox.isChecked()
+        task_label_list = self.label_list_input.text()
+        lsl_marker_stream_name = self.LSL_stream_name_input.text()
+        lsl_error_stream_name = self.LSL_error_stream_name_input.text()
 
-
-
-
+        return task_interval, task_repeats, randomized_order, task_label_list, lsl_marker_stream_name, lsl_error_stream_name
 
     def start_testing_btn_clicked(self):
         if self.experiment_running:
             return
 
-        
+        task_interval, task_repeats, randomized_order, task_label_list, lsl_marker_stream_name, lsl_error_stream_name = self.marker_info()
 
-
-
+        print('John')
