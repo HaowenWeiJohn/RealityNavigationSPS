@@ -321,7 +321,7 @@ def init_label_img_dict(path):
     for img_name in os.listdir(path):
         img_path = os.path.join(path, img_name)
         img = cv2.imread(img_path)
-        img = cv2.resize(img, (500, 700))
+        img = cv2.resize(img, (550, 700))
         img = convert_cv_qt(img)
         img_dict[img_name] = img
 

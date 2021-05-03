@@ -12,7 +12,7 @@ import numpy as np
 from datetime import datetime
 
 from PyQt5.QtCore import QTimer, QFile, QTextStream
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QProgressBar
 
 from config import config_ui
 
@@ -22,13 +22,13 @@ from utils.data_utils import RNStream
 from utils.ui_utils import dialog_popup
 import pyqtgraph as pg
 from config import config_path
-
+from utils.data_utils import generate_task_label_array
 
 class IndexPenSPS(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__()
 
-        self.experiment_running = False
+        self.experiment_state = 'waiting'
 
 
 
@@ -74,23 +74,34 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.indexpen_markercontrol_btns_container, self.indexpen_markercontrol_btns_layout = init_container \
             (parent=self.indexpen_markercontrolpanel_layout, vertical=False, label='IndexPen Marker control')
 
-        self.interrupt_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Interrupt')
         self.start_testing_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Start testing')
-        self.start_experiment_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Start Recording')
+        self.interrupt_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Interrupt')
         self.error_capture_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Error Signal')
+        self.interrupt_btn.setDisabled(True)
+        self.error_capture_btn.setDisabled(True)
+        # self.start_experiment_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Start Recording')
+
 
         ##################Instruction block########################
         self.indexpen_instruction_container, self.indexpen_instruction_layout = init_container \
             (parent=self.indexpen_presentation_vertical_layout, vertical=True, label='IndexPen Instruction')
 
+        ##################Pop Window Btn########################
         self.pop_instruction_window_btn = init_button(parent=self.indexpen_instruction_layout, label='Pop instruction')
+        ########## progress bar ############
+        self.progress_bar = QProgressBar()
+        self.indexpen_instruction_layout.addWidget(self.progress_bar)
 
+        # Instruction Label
         self.currentLabel = QLabel(text='Write')
         self.nextLabel = QLabel(text='Next to Write:')
         self.indexpen_instruction_layout.addWidget(self.currentLabel)
         self.indexpen_instruction_layout.addWidget(self.nextLabel)
+        self.currentLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.nextLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.currentLabel.adjustSize()
         self.nextLabel.adjustSize()
+
 
         # test init image
         self.image_label_dict = init_label_img_dict(config_path.indexpen_gesture_image_dir)
@@ -100,10 +111,9 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.start_testing_btn.clicked.connect(self.start_testing_btn_clicked)
 
         # marker on tick
-        # self.marker_timer = QTimer()
+        self.marker_timer = QTimer()
         # self.marker_timer.timeout.connect(self.marker_tick)
         # self.timer.setInterval(config.REFRESH_INTERVAL)  # for 1000 Hz refresh rate
-
         # self.timer.start()
 
     def marker_info(self):
@@ -113,20 +123,29 @@ class IndexPenSPS(QtWidgets.QWidget):
         # tasklabel list
         # #LSL outlet name
         # Error Stream name
-
         task_interval = self.time_interval_slider_view.slider.value()
         task_repeats = self.repeat_num_slider_view.slider.value()
         randomized_order = self.random_checkbox.isChecked()
         task_label_list = self.label_list_input.text()
         lsl_marker_stream_name = self.LSL_stream_name_input.text()
         lsl_error_stream_name = self.LSL_error_stream_name_input.text()
-
         return task_interval, task_repeats, randomized_order, task_label_list, lsl_marker_stream_name, lsl_error_stream_name
 
     def start_testing_btn_clicked(self):
-        if self.experiment_running:
+        if self.experiment_running!='waiting':
             return
 
         task_interval, task_repeats, randomized_order, task_label_list, lsl_marker_stream_name, lsl_error_stream_name = self.marker_info()
 
-        print('John')
+        if ' ' in lsl_marker_stream_name or ' ' in lsl_error_stream_name:
+            dialog_popup(msg='LSL stream name cannot have space')
+            return
+        # TODO: init lsl marker thread
+
+        # TODO: init lsl error marker thread
+
+        # create task list
+        task_label_array = generate_task_label_array(task_label_str=task_label_list, repeats=task_repeats, randomized=randomized_order)
+
+
+
