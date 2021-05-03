@@ -23,14 +23,14 @@ from utils.ui_utils import dialog_popup
 import pyqtgraph as pg
 from config import config_path
 from utils.data_utils import generate_task_label_array
+from utils.sound import *
+
 
 class IndexPenSPS(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__()
 
-        self.experiment_state = 'waiting'
-
-
+        self.experiment_state = 'idle'
 
         # load panel
         self.ui = uic.loadUi("ui/IndexPenSPS.ui", self)
@@ -81,7 +81,6 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.error_capture_btn.setDisabled(True)
         # self.start_experiment_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Start Recording')
 
-
         ##################Instruction block########################
         self.indexpen_instruction_container, self.indexpen_instruction_layout = init_container \
             (parent=self.indexpen_presentation_vertical_layout, vertical=True, label='IndexPen Instruction')
@@ -102,22 +101,21 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.currentLabel.adjustSize()
         self.nextLabel.adjustSize()
 
-
         # test init image
         self.image_label_dict = init_label_img_dict(config_path.indexpen_gesture_image_dir)
-        self.currentLabel.setPixmap(self.image_label_dict['A' + '.PNG'])
+        self.currentLabel.setPixmap(self.image_label_dict['Nois' + '.PNG'])
 
-        #function connection
+        # function connection
         self.start_testing_btn.clicked.connect(self.start_testing_btn_clicked)
 
         # marker on tick
         self.marker_timer = QTimer()
-        # self.marker_timer.timeout.connect(self.marker_tick)
+        self.marker_timer.timeout.connect(self.marker_tick)
         # self.timer.setInterval(config.REFRESH_INTERVAL)  # for 1000 Hz refresh rate
         # self.timer.start()
 
     def marker_info(self):
-        #interval
+        # interval
         # #repeats
         # #randomized
         # tasklabel list
@@ -132,7 +130,7 @@ class IndexPenSPS(QtWidgets.QWidget):
         return task_interval, task_repeats, randomized_order, task_label_list, lsl_marker_stream_name, lsl_error_stream_name
 
     def start_testing_btn_clicked(self):
-        if self.experiment_running!='waiting':
+        if self.experiment_state != 'idle':
             return
 
         task_interval, task_repeats, randomized_order, task_label_list, lsl_marker_stream_name, lsl_error_stream_name = self.marker_info()
@@ -145,7 +143,67 @@ class IndexPenSPS(QtWidgets.QWidget):
         # TODO: init lsl error marker thread
 
         # create task list
-        task_label_array = generate_task_label_array(task_label_str=task_label_list, repeats=task_repeats, randomized=randomized_order)
+        self.task_label_array = generate_task_label_array(task_label_str=task_label_list, repeats=task_repeats,
+                                                          randomized=randomized_order)
 
+        self.marker_timer.setInterval(1000 * task_interval)  # for 1000 Hz refresh rate
 
+        self.prepare_experiment()
 
+    def prepare_experiment(self):
+        self.currentLabel.setText('Press G to Continue')
+        self.experiment_state = 'waiting'  # press Enter to continue
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_G and self.experiment_state == 'waiting':
+            self.start_experinment()
+        if event.key() == Qt.Key_S and self.experiment_state != 'idle':
+            self.interrupt_experinment()
+
+    def start_experinment(self):
+        print('switch to running state')
+        # start self.marker_timer
+        self.marker_timer.start()
+        # send start marker
+
+        self.experiment_state = 'running'
+
+    def interrupt_experinment(self):
+        print('switch to idle state with interrupt')
+        #  TODO: send interrupt marker
+
+        self.stop_experiment_reset()
+
+    def finish_experinment(self):
+        print('switch to idle state with normal exit')
+        #  TODO: send finishing marker
+
+        self.stop_experiment_reset()
+
+    def marker_tick(self):
+        if self.task_label_array.size == 0:
+            self.finish_experinment()
+            return
+        # remove first element, return first element
+        current_task = self.task_label_array[0]
+        self.task_label_array = np.delete(self.task_label_array, 0)
+        # switch current image
+        self.currentLabel.setPixmap(self.image_label_dict[current_task + '.PNG'])
+        # Label Next to Write
+
+        if self.task_label_array.size>0:
+            self.nextLabel.setText('Next to Write: ' + self.task_label_array[0])
+        else:
+            self.nextLabel.setText('No next')
+        # TODO: send encoder marker
+
+        print('Current task: '+ current_task)
+
+        # sound
+        dah()
+
+    def stop_experiment_reset(self):
+        self.marker_timer.stop()
+        self.currentLabel.setPixmap(self.image_label_dict['Nois' + '.PNG'])
+        self.nextLabel.setText('Next to Write')
+        self.experiment_state = 'idle'
