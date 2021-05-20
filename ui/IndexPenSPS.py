@@ -109,11 +109,12 @@ class IndexPenSPS(QtWidgets.QWidget):
 
         # test init image
         self.image_label_dict = init_label_img_dict(config_path.indexpen_gesture_image_dir)
-        self.currentLabel.setPixmap(self.image_label_dict['Nois' + '.PNG'])
+        self.currentLabel.setPixmap(self.image_label_dict['Ready' + '.PNG'])
 
-        # function connection
+        # btn function connection
         self.start_testing_btn.clicked.connect(self.start_testing_btn_clicked)
-
+        self.start_testing_btn.clicked.connect(self.start_testing_btn_clicked)
+        self.interrupt_btn.clicked.connect(self.stop_experiment_reset)
         ##########################Timer connect#####################################
         # marker on tick
         self.marker_timer = QTimer()
@@ -159,6 +160,10 @@ class IndexPenSPS(QtWidgets.QWidget):
 
         self.prepare_experiment()
 
+        self.interrupt_btn.setDisabled(False)
+        self.error_capture_btn.setDisabled(False)
+        self.start_testing_btn.setDisabled(True)
+
     def prepare_experiment(self):
         self.currentLabel.setText('Press G to Continue')
         self.experiment_state = 'waiting'  # press Enter to continue
@@ -181,6 +186,8 @@ class IndexPenSPS(QtWidgets.QWidget):
     def interrupt_experinment(self):
         print('switch to idle state with interrupt')
         #  TODO: send interrupt marker
+        self.interrupt_btn.setDisabled(True)
+        self.error_capture_btn.setDisabled(True)
 
         self.stop_experiment_reset()
 
@@ -215,9 +222,14 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.marker_timer.stop()
         self.progress_bar_update_timer.stop()
         self.task_progress_bar.setValue(0)
-        self.currentLabel.setPixmap(self.image_label_dict['Nois' + '.PNG'])
+        self.currentLabel.setPixmap(self.image_label_dict['Ready' + '.PNG'])
         self.nextLabel.setText('Next to Write: ')
         self.experiment_state = 'idle'
+
+
+        self.interrupt_btn.setDisabled(True)
+        self.error_capture_btn.setDisabled(True)
+        self.start_testing_btn.setDisabled(False)
 
 
     def updata_progress_bar(self):
