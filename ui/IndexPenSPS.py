@@ -186,8 +186,6 @@ class IndexPenSPS(QtWidgets.QWidget):
     def interrupt_experinment(self):
         print('switch to idle state with interrupt')
         #  TODO: send interrupt marker
-        self.interrupt_btn.setDisabled(True)
-        self.error_capture_btn.setDisabled(True)
 
         self.stop_experiment_reset()
 
