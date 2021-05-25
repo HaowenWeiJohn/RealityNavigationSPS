@@ -1,11 +1,12 @@
 {
-  "ExpName" : "IndexPen",
+  "ExpName" : "IndexPen_2021_Summer",
+  "ExpLSLStreamName" : "IndexPen_30",
   "ExpID" : 1000,
   "ExpStartMarker": 100,
   "ExpEndMarker": -100,
-  "ExpInterruptMarker": 123,
-  "ErrorMarker": -123,
-  "LabelMarker": {
+  "ExpErrorMarker": 123,
+  "ExpInterruptMarker": -123,
+  "ExpLabelMarker": {
     "A": 1,
     "B": 2,
     "C": 3,

@@ -16,7 +16,7 @@ import config
 from utils.data_utils import window_slice
 
 from utils.ui_utils import init_sensor_or_lsl_widget, init_add_widget, CustomDialog, init_button, dialog_popup, \
-    get_distinct_colors, init_camera_widget, convert_cv_qt, AnotherWindow
+    get_distinct_colors, init_camera_widget, convert_cv_qt, AnotherWindow, load_all_lslStream_presets
 import numpy as np
 
 
@@ -28,8 +28,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle('Reality Navigation SPS')
         self.app = app
 
+        self.exp_presets_dict = load_all_lslStream_presets()
         # IndexPen Tab
-        self.indexpenSPS = IndexPenSPS(self)
+        self.indexpenSPS = IndexPenSPS(self, self.exp_presets_dict)
         self.indexpen_tab_horizontal_layout.addWidget(self.indexpenSPS)
 
         # Thumouse Tab
