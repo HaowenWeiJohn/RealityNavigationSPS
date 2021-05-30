@@ -4,7 +4,7 @@
   "ExpID" : 1000,
   "ExpStartMarker": 100,
   "ExpEndMarker": -100,
-  "ExpErrorMarker": 123,
+  "ExpErrorMarker": -999,
   "ExpInterruptMarker": -123,
   "ExpLabelMarker": {
     "A": 1,
