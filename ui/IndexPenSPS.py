@@ -227,7 +227,7 @@ class IndexPenSPS(QtWidgets.QWidget):
         # TODO: send encoder marker
         marker = self.indexpen_exp_preset_dict['ExpLabelMarker'][current_task]
         self.outlet_stream.push_sample([self.indexpen_exp_preset_dict['ExpLabelMarker'][current_task]])
-        print(time.time())
+        print('time.time(): ', time.time())
 
         # printInfo
         print('Current task: ' + current_task)
