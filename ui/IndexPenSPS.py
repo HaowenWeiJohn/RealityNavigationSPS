@@ -15,7 +15,7 @@ from PyQt5.QtCore import QTimer, QFile, QTextStream
 from PyQt5.QtWidgets import QFileDialog, QProgressBar
 from pylsl import StreamInfo, StreamOutlet
 
-from config import config_ui
+from config import config_ui, config_signal
 
 from utils.ui_utils import init_slider_bar_box
 from utils.ui_utils import *
@@ -131,6 +131,10 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.progress_bar_update_timer.timeout.connect(self.updata_progress_bar)
         self.progress_bar_update_timer.setInterval(config_ui.progress_bar_updat_freq)
 
+        self.internal_marker_timer = QTimer()
+        self.internal_marker_timer.timeout.connect(self.internal_marker_tick)
+        self.internal_marker_timer.setInterval(config_signal.internal_marker_tick_period)
+
     def marker_info(self):
         # interval
         # #repeats
@@ -151,11 +155,10 @@ class IndexPenSPS(QtWidgets.QWidget):
         if self.experiment_state != 'idle':
             return
 
-        #send exprenment ID
+        # send exprenment ID
         self.outlet_stream.push_sample([self.indexpen_exp_preset_dict['ExpID']])
 
         task_interval, task_repeats, randomized_order, task_label_list = self.marker_info()
-
 
         # TODO: init lsl marker thread
 
@@ -227,15 +230,21 @@ class IndexPenSPS(QtWidgets.QWidget):
         # TODO: send encoder marker
         marker = self.indexpen_exp_preset_dict['ExpLabelMarker'][current_task]
         self.outlet_stream.push_sample([self.indexpen_exp_preset_dict['ExpLabelMarker'][current_task]])
+        # start internal dilidilidili timer
+        self.internal_marker_timer.start()
+
         print('time.time(): ', time.time())
 
         # printInfo
         print('Current task: ' + current_task)
         print('Send Encoded Marker: ' + str(marker))
         print('Task Remaining Time: ' + str(self.marker_timer.remainingTime()))
-
         # sound bilibilibilibili
         dah()
+
+    def internal_marker_tick(self):
+        dih()
+        self.internal_marker_timer.stop()
 
     def stop_experiment_reset(self):
         self.marker_timer.stop()
@@ -255,6 +264,16 @@ class IndexPenSPS(QtWidgets.QWidget):
     def updata_progress_bar(self):
         bar_value = int((self.time_interval_ms - self.marker_timer.remainingTime()) / self.time_interval_ms * 100)
         self.task_progress_bar.setValue(bar_value)
+        # if bar_value<25:
+        #     self.task_progress_bar.setStyleSheet("QProgressBar::chunk "
+        #                                          "{"
+        #                                          "background-color: red;"
+        #                                          "}")
+        # else:
+        #     self.task_progress_bar.setStyleSheet("QProgressBar::chunk "
+        #                                          "{"
+        #                                          "background-color: green;"
+        #                                          "}")
 
     def create_lsl(self, name='IndexPen_30', type='Gestur_Exp_Marker',
                    nominal_srate=3, channel_format='float32',
