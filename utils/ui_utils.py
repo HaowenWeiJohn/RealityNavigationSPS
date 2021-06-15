@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QComboBox, QDialog, QDialogButtonBox, \
     QGraphicsView, QGraphicsScene, QCheckBox
 from PyQt5.QtWidgets import QLabel, QVBoxLayout
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget
+import json
 
 from config import config_ui
 from utils.Sliders import LabeledSlider
@@ -348,3 +349,14 @@ class AnotherWindow(QWidget):
             event.accept()  # let the window close
         else:
             event.ignore()
+
+def load_all_lslStream_presets(lsl_preset_roots='Presets/ExpPresets'):
+    preset_file_names = os.listdir(lsl_preset_roots)
+    preset_file_paths = [os.path.join(lsl_preset_roots, x) for x in preset_file_names]
+    presets = {}
+    for pf_path in preset_file_paths:
+        preset_dict = json.load(open(pf_path))
+
+        stream_name = preset_dict['ExpName']
+        presets[stream_name] = preset_dict
+    return presets
