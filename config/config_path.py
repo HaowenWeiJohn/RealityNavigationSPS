@@ -1,3 +1,3 @@
 
 
-indexpen_gesture_image_dir = 'media/Gesture_img_2020'
+indexpen_gesture_image_dir = 'media/Gesture_img_2020_update'
