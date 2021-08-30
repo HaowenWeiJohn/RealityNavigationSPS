@@ -36,7 +36,7 @@ indexpen_interval_default_max = 4
 indexpen_repeats_default_max = 10
 
 indexpen_interval_time_default = 4 # in second
-indexpen_repeats_num_default = 5
+indexpen_repeats_num_default = 1
 
 # indexPen_classes_default = 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Spc Bspc Ent Act'
 indexPen_classes_default = 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Spc Bspc Ent Act Nois'

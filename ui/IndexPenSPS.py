@@ -71,9 +71,23 @@ class IndexPenSPS(QtWidgets.QWidget):
             parent=self.indexpen_markercontrolpanel_layout, label='Randomized Order : ', default_checked=False)
 
         # label list
+        self.task_dict = generate_sentence_task()
+        self.task_dict.insert(0, config_ui.indexPen_classes_default)
+        self.task_dict_combbox = self.task_dict.copy()
+        for i in range(0, len(self.task_dict_combbox)):
+            self.task_dict_combbox[i] =  ''.join((str(i), '. ', self.task_dict_combbox[i]))
+
+
+
+
         self.label_list_layout, self.label_list_input = init_inputBox(parent=self.indexpen_markercontrolpanel_layout,
                                                                       label='Task Label List:',
-                                                                      default_input=config_ui.indexPen_classes_default)
+                                                                      default_input=self.task_dict[0])
+
+
+        self.task_combo_box = init_combo_box(parent=self.indexpen_markercontrolpanel_layout, label=None,
+                                          item_list=self.task_dict_combbox)
+        self.task_combo_box.currentIndexChanged.connect(self.task_combo_box_index_changed)
 
         # # LSL stream Name
         # self.LSL_stream_name_layout, self.LSL_stream_name_input = init_inputBox(
@@ -298,3 +312,10 @@ class IndexPenSPS(QtWidgets.QWidget):
               "      Sampling Rate: " + str(nominal_srate) + "\n" + \
               "      Channel Format: " + channel_format + " \n" + \
               "      Source Id: " + source_id + " \n")
+
+    def task_combo_box_index_changed(self):
+        combo_box_index = self.task_combo_box.currentIndex()
+        self.label_list_input.setText(
+            self.task_dict[combo_box_index]
+        )
+        print('Current Selected Sentence: ', combo_box_index)
