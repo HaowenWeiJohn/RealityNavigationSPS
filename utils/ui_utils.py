@@ -361,7 +361,7 @@ def load_all_lslStream_presets(lsl_preset_roots='Presets/ExpPresets'):
         presets[stream_name] = preset_dict
     return presets
 
-def generate_sentence_task(file_path="resource/pangram/40sentences.txt"):
+def generate_sentence_task(file_path="resources/pangram/40sentences.txt"):
     f = open(file_path, "r")
     sent_list = []
     for (index, sent) in enumerate(f):
@@ -370,7 +370,7 @@ def generate_sentence_task(file_path="resource/pangram/40sentences.txt"):
         curr_sent = curr_sent.replace("+", "Spc")
 
         # add enter
-        curr_sent = ''.join(('Nois Act ', curr_sent, ' Ent Act Nois'))
+        curr_sent = ''.join(('Nois Act Bspc ', curr_sent, ' Ent Act Nois'))
         sent_list.append(curr_sent)
         # curr_sent = split(" ".join(cur_sent))
     return sent_list
