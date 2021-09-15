@@ -75,18 +75,14 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.task_dict.insert(0, config_ui.indexPen_classes_default)
         self.task_dict_combbox = self.task_dict.copy()
         for i in range(0, len(self.task_dict_combbox)):
-            self.task_dict_combbox[i] =  ''.join((str(i), '. ', self.task_dict_combbox[i]))
-
-
-
+            self.task_dict_combbox[i] = ''.join((str(i), '. ', self.task_dict_combbox[i]))
 
         self.label_list_layout, self.label_list_input = init_inputBox(parent=self.indexpen_markercontrolpanel_layout,
                                                                       label='Task Label List:',
                                                                       default_input=self.task_dict[0])
 
-
         self.task_combo_box = init_combo_box(parent=self.indexpen_markercontrolpanel_layout, label=None,
-                                          item_list=self.task_dict_combbox)
+                                             item_list=self.task_dict_combbox)
         self.task_combo_box.currentIndexChanged.connect(self.task_combo_box_index_changed)
 
         # # LSL stream Name
@@ -100,6 +96,12 @@ class IndexPenSPS(QtWidgets.QWidget):
 
         self.indexpen_markercontrol_btns_container, self.indexpen_markercontrol_btns_layout = init_container \
             (parent=self.indexpen_markercontrolpanel_layout, vertical=False, label='IndexPen Marker control')
+
+        self.currentIndexLabel = QLabel(text='Current Label Index: ')
+        self.indexpen_markercontrolpanel_layout.addWidget(self.currentIndexLabel)
+        self.currentIndexLabel.setAlignment(QtCore.Qt.AlignLeft)
+        self.currentIndexLabel.adjustSize()
+        self.currentLabelIndex = 0
 
         self.start_testing_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Start testing')
         self.interrupt_btn = init_button(parent=self.indexpen_markercontrol_btns_layout, label='Interrupt')
@@ -230,6 +232,8 @@ class IndexPenSPS(QtWidgets.QWidget):
         if self.task_label_array.size == 0:
             self.end_experiment()
             return
+        self.currentIndexLabel.setText('Current Label Index: ' + str(self.currentLabelIndex))
+        self.currentLabelIndex += 1
         # remove first element, return first element
         current_task = self.task_label_array[0]
         self.task_label_array = np.delete(self.task_label_array, 0)
@@ -271,6 +275,8 @@ class IndexPenSPS(QtWidgets.QWidget):
         self.interrupt_btn.setDisabled(True)
         self.error_capture_btn.setDisabled(True)
         self.start_testing_btn.setDisabled(False)
+        self.currentIndexLabel.setText('Current Label Index: ')
+        self.currentLabelIndex = 0
 
     def error_signal(self):
         self.outlet_stream.push_sample([self.indexpen_exp_preset_dict['ExpErrorMarker']])
