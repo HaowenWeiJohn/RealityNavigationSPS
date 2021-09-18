@@ -32,7 +32,7 @@ capture_display_height = 480
 
 progress_bar_updat_freq = 50
 ######################## indexpen experinment default config #######################
-indexpen_interval_default_max = 4
+indexpen_interval_default_max = 10
 indexpen_repeats_default_max = 10
 
 indexpen_interval_time_default = 4 # in second
