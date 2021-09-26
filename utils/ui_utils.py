@@ -89,6 +89,29 @@ def init_inputBox(parent, label=None, label_bold=False, default_input=None):
     return layout, textbox
 
 
+def init_textEditInputBox(parent, font_size=20, min_w=None, min_h=None, max_w=None, max_h=None, label=None,
+                          label_bold=False, default_input=None, vertical=False):
+    container, layout = init_container(parent=parent,
+                                       label=label,
+                                       label_bold=label_bold,
+                                       vertical=vertical)
+    textbox = QtWidgets.QTextEdit()
+    font = textbox.font()
+    font.setPointSize(font_size)
+    textbox.setFont(font)
+    textbox.setContentsMargins(5, 0, 0, 0)
+    textbox.setText(str(default_input))
+    # textbox.setMinimumSize(font_size + minimum_width_offset, font_size + minimum_height_offset)
+    # textbox.setMaximumHeight(maxh=50)
+    if min_w: textbox.setMinimumWidth(min_w)
+    if min_h: textbox.setMinimumHeight(min_h)
+    if max_w: textbox.setMinimumWidth(max_w)
+    if min_h: textbox.setMaximumHeight(max_h)
+    layout.addWidget(textbox)
+    # textbox.setStyleSheet("background-color:white;")
+
+    return layout, textbox
+
 def init_button(parent, label=None, function=None, style=config_ui.button_style_classic):
     btn = QtWidgets.QPushButton(text=label)
     if function:
@@ -322,7 +345,7 @@ def init_label_img_dict(path):
     for img_name in os.listdir(path):
         img_path = os.path.join(path, img_name)
         img = cv2.imread(img_path)
-        img = cv2.resize(img, (550, 700))
+        img = cv2.resize(img, (500, 600))
         img = convert_cv_qt(img)
         img_dict[img_name] = img
 

@@ -116,12 +116,24 @@ class IndexPenSPS(QtWidgets.QWidget):
 
         ##################Pop Window Btn########################
         self.pop_instruction_window_btn = init_button(parent=self.indexpen_instruction_layout, label='Pop instruction')
+
+        ################# Text Input Box ######################
+        self.indexpeninference_text_layout, self.indexpeninference_text_input = init_textEditInputBox(
+            parent=self.indexpen_instruction_layout,
+            min_h=80,
+            max_h=80,
+            label='Index Input Box',
+            default_input=config_ui.indexPen_text_input_default,
+            vertical=True)
+
+
         ########## progress bar ############
         self.task_progress_bar = QProgressBar()
         self.indexpen_instruction_layout.addWidget(self.task_progress_bar)
 
         # Instruction Label
         self.currentLabel = QLabel(text='Write')
+        self.currentLabel.setMinimumSize(500,600)
         self.nextLabel = QLabel(text='Next to Write:')
         self.indexpen_instruction_layout.addWidget(self.currentLabel)
         self.indexpen_instruction_layout.addWidget(self.nextLabel)
